@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Home = ({
   onStartQuiz,
@@ -7,7 +7,28 @@ const Home = ({
   stats,
   theme,
   onToggleTheme,
+  settings,
+  onUpdateSettings,
 }) => {
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customCount, setCustomCount] = useState("");
+
+  const quickOptions = [20, 50, 100, 200];
+
+  const handleQuickSelect = (count) => {
+    onUpdateSettings({ ...settings, questionCount: count });
+    setShowCustomInput(false);
+  };
+
+  const handleCustomSubmit = () => {
+    const count = parseInt(customCount);
+    if (count > 0 && count <= 600) {
+      onUpdateSettings({ ...settings, questionCount: count });
+      setShowCustomInput(false);
+      setCustomCount("");
+    }
+  };
+
   return (
     <div className="home">
       <button
@@ -68,8 +89,71 @@ const Home = ({
 
         <h1 className="home-title">كفاءة Quiz</h1>
         <p className="home-subtitle">
-          اختبر معرفتك في مجال التربية والتكوين من خلال أسئلة متنوعة ومتجددة
+          اختبر معرفتك في مجال علوم التربية من خلال أسئلة متنوعة ومتجددة
         </p>
+
+        {/* Quick Question Count Selection */}
+        <div className="quick-settings">
+          <p className="quick-settings-label">عدد الأسئلة:</p>
+          <div className="quick-options">
+            {quickOptions.map((count) => (
+              <button
+                key={count}
+                className={`quick-option ${
+                  settings.questionCount === count ? "active" : ""
+                }`}
+                onClick={() => handleQuickSelect(count)}
+              >
+                {count}
+              </button>
+            ))}
+            <button
+              className={`quick-option custom ${
+                showCustomInput ? "active" : ""
+              }`}
+              onClick={() => setShowCustomInput(!showCustomInput)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              مخصص
+            </button>
+          </div>
+
+          {showCustomInput && (
+            <div className="custom-input-wrapper">
+              <input
+                type="number"
+                className="custom-input"
+                placeholder="أدخل عدد الأسئلة (1-600)"
+                min="1"
+                max="600"
+                value={customCount}
+                onChange={(e) => setCustomCount(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleCustomSubmit()}
+              />
+              <button className="custom-input-btn" onClick={handleCustomSubmit}>
+                تأكيد
+              </button>
+            </div>
+          )}
+
+          <p className="current-selection">
+            الاختيار الحالي: <span>{settings.questionCount}</span> سؤال
+          </p>
+        </div>
 
         <div className="home-buttons">
           <button

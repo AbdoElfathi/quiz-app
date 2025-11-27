@@ -89,6 +89,8 @@ function App() {
             theme={theme}
             onToggleTheme={toggleTheme}
             stats={getStats()}
+            settings={quizSettings}
+            onUpdateSettings={setQuizSettings}
           />
         );
     }
